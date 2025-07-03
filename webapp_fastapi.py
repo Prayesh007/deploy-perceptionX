@@ -4,7 +4,8 @@ import cv2
 import numpy as np
 import subprocess
 import tempfile
-from bson import ObjectId, Binary
+from bson import ObjectId
+from bson.binary import Binary
 from PIL import Image
 from fastapi import FastAPI, File, UploadFile, BackgroundTasks, HTTPException, Request
 from fastapi.responses import HTMLResponse, StreamingResponse
