@@ -17,30 +17,30 @@ from ultralytics import YOLO
 
 app = FastAPI()
 
-# CORS
+# Enable CORS for frontend compatibility
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"]
+    allow_headers=["*"],
 )
 
-# MongoDB Atlas
+# MongoDB Atlas Connection
 mongo = AsyncIOMotorClient("mongodb+srv://aitools2104:kDTRxzV6MgO4nicA@cluster0.tqkyb.mongodb.net/?retryWrites=true&w=majority")
 db = mongo["test"]
 files_collection = db["files"]
 
-# Load YOLO model
+# Load YOLO Model
 weights_path = "yolov11/best.pt"
 if not os.path.exists(weights_path):
     raise FileNotFoundError("Model not found at yolov11/best.pt")
 model = YOLO(weights_path)
 print("✅ YOLO model loaded successfully!")
 
-# Templates and Static
-templates = Jinja2Templates(directory="views")
+# Static and Template Setup
 app.mount("/static", StaticFiles(directory="static"), name="static")
+templates = Jinja2Templates(directory="views")
 
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
@@ -144,12 +144,6 @@ async def get_processed(file_id: str):
         mimetype = "image/jpeg"
 
     return StreamingResponse(io.BytesIO(doc["processedData"]), media_type=mimetype)
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run("webapp_fastapi:app", host="0.0.0.0", port=int(os.environ.get("PORT", 8000)))
-
-
 
 
 
